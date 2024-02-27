@@ -14,11 +14,11 @@ read -p "Enter username to add: " username
 read -p "Enter name and surname to add: "	namesurname
 read -p "Enter position to add: "	position
 
-echo "$username:x:885:10:$namesurname, $position:/users/$username:/bin/bash" >> /etc/passwd
-echo "$username:*:14861:0:10000::::" >> /etc/shadow
+echo "$username:x:885:10:$namesurname, $position:/users/$username:/bin/bash" >> /path
+echo "$username:*:14861:0:10000::::" >> /path
 
 ypcat -k passwd | grep $username
 
-mkdir -p /mid/server/scratch/$username
-chmod 1777 /mid/server/scratch/$username
-chown $username /mid/server/scratch/$username
+mkdir -p /path/$username
+chmod 1777 /path/$username
+chown $username /path/$username
