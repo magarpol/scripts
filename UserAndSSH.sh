@@ -25,8 +25,9 @@ chmod 600 /home/$username/.ssh/authorized_keys
 chown $username:sudo /home/$username/.ssh
 chown $username:sudo /home/$username/.ssh/authorized_keys
 
-#Read Public Key and paste it in authorized_keys
+#Read Public Key and paste it in authorized_keys, then edit it to one single line
 read -p "Please paste the user´s Public Key: " publicKey
-echo $plublicKey | sudo tee -a /home/$username/.ssh/authorized_keys
+echo $plublicKey | tee -a /home/$username/.ssh/authorized_keys
+nano /home/$username/.ssh/authorized_keys
 
 echo "$username has been created."
