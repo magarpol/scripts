@@ -19,7 +19,7 @@ user_directory() {
 
 # User input for NFS shares path
 get_nfs_shares() {
-    echo "Enter the NFS share to be mounted, for example: 'qnap3:/na1/backup_na1/galadriel/export1/share/sun1' one by one"
+    echo "Enter the NFS share to be mounted, for example: 'share://folder/folder/folder' one by one"
     echo "When done, press Enter"
     nfs_shares=()
     while true; do
@@ -42,6 +42,6 @@ update_fstab() {
 mount_shares() {
     mount -a
     echo "NFS shares mounted"
-	ls "$related_mount_dir"
+    ls "$related_mount_dir"
 }
 
