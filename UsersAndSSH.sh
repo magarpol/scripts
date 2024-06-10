@@ -60,4 +60,14 @@ done
 for username in "${usernames[@]}"; do
         nano /home/$username/.ssh/authorized_keys
 done
+
+#Comment 'PermitRootLogin yes' in sshd_config
+sed -i 's/^PermitRootLogin yes/#PermitRootLogin yes/' /etc/ssh/sshd_config
+systemctl restart sshd
+systemctl restart ssh 
+
+#Edit the sudoers file, members of sudo group can use sudo without password
+sed -i 's/^sudo.*ALL=(ALL:ALL) ALL/#&/' /etc/sudoers
+echo "%sudo ALL=(ALL:ALL) NOPASSWD: ALL" | EDITOR='tee -a' visudo
+                                                            
                                                             
