@@ -22,7 +22,7 @@ for i in "${!usernames[@]}"; do
                 if [[ "$ID" == "opensuse" || "$ID_LIKE" == "suse" ]]; then
                         useradd -m "$username" || { echo "Failed to create user $username"; continue; }
                 else
-                        adduser --gecos "" "$username" || { echo "Failed to create user $username"; continue; }
+                        adduser --gecos "" --disabled-password "$username" || { echo "Failed to create user $username"; continue; }
                 fi
         else
                 echo "/etc/os-release not found, cannot determine OS type"
