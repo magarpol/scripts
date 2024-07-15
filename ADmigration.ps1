@@ -36,7 +36,7 @@ Foreach($row in $csvData){
         if ($user.Team -ne $($row.Team)) {
             $SetADUserSplatHash.Add('Team',$($row.Team))
         }
-	    if ($user.DisplayName -ne $($row.'Name (bevorzugt)')) {
+	if ($user.DisplayName -ne $($row.'Name (bevorzugt)')) {
             $SetADUserSplatHash.Add('DisplayName',$($row.'Name (bevorzugt)'))
         }
 	if ($user.Status -ne $($row.Status)) {
