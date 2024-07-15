@@ -1,11 +1,14 @@
 # Import the CSV file
-$csvData = Import-Csv -Path 'C:\mydata.csv'
+$csvData = Import-Csv -Path 'C:\mydata.csv' -encoding UTF8
+#Fields CSV
+#Vorname (bÃ¼rgerlich),"Nachname (bÃ¼rgerlich)","E-Mail","Abteilung","Position","Gesellschaft","Team","Name (bevorzugt)","Status","FÃ¼hrungskraft","Austrittsdatum","Telefonnummer (geschÃ¤ftlich)"
 
 $NotFoundList = @()
 
 Foreach($row in $csvData){
-
-    $User = Get-ADUser -Filter "mail -eq '$($row.'E-mail')'" -Properties DisplayName, Department, Title, Mobile, Mail
+    #Fields AD
+    #GivenName, Surname, mail, Department, Title, Company, Team, DisplayName, Status, Manager, ExitDate, Mobile
+    $User = Get-ADUser -Filter "mail -eq '$($row.'E-mail')'" -GivenName, Surname, mail, Department, Title, Company, Team, DisplayName, Status, Manager, ExitDate, Mobile
 
     $SetADUserSplatHash = @{
         Identity = $User.sAMAccountName
@@ -18,8 +21,8 @@ Foreach($row in $csvData){
         if ($user.Surname -ne $($row.'Nachname (bürgerlich)')) {
             $SetADUserSplatHash.Add('Surname',$($row.'Nachname (bürgerlich)'))
         }
-	    if ($user.DisplayName -ne $($row.'Name (bevorzugt)')) {
-            $SetADUserSplatHash.Add('DisplayName',$($row.'Name (bevorzugt)'))
+	if ($user.mail -ne $($row.'E-Mail')) {
+            $SetADUserSplatHash.Add('mail',$($row.'E-Mail'))
         }
         if ($user.Department -ne $($row.Abteilung)) {
             $SetADUserSplatHash.Add('Department',$($row.Abteilung))
@@ -27,11 +30,26 @@ Foreach($row in $csvData){
         if ($user.Title -ne $($row.Position)) {
             $SetADUserSplatHash.Add('Title',$($row.Position))
         }
-        if ($user.Mobile -ne $($row.'Telefonnummer (geschäftlich)')) {
-            $SetADUserSplatHash.Add('Mobile',$($row.'Telefonnummer (geschäftlich)'))
+	if ($user.Company -ne $($row.Gesellschaft)) {
+            $SetADUserSplatHash.Add('Company',$($row.Gesellschaft))
         }
-		if ($user.mail -ne $($row.'E-Mail')) {
-            $SetADUserSplatHash.Add('mail',$($row.'E-Mail'))
+        if ($user.Team -ne $($row.Team)) {
+            $SetADUserSplatHash.Add('Team',$($row.Team))
+        }
+	    if ($user.DisplayName -ne $($row.'Name (bevorzugt)')) {
+            $SetADUserSplatHash.Add('DisplayName',$($row.'Name (bevorzugt)'))
+        }
+	if ($user.Status -ne $($row.Status)) {
+            $SetADUserSplatHash.Add('Status',$($row.Status))
+        }
+        if ($user.Manager -ne $($row.Führungskraft)) {
+            $SetADUserSplatHash.Add('Manager',$($row.Führungskraft))
+        }
+        if ($user.ExitDate -ne $($row.Austrittsdatum)) {
+            $SetADUserSplatHash.Add('ExitDate',$($row.Austrittsdatum))
+        }
+        if ($user.Mobile -ne $($row.'Telefonnummer (geschäftlich)')) {
+            $SetADUserSplatHash.Add('Mobile',$($row.'Telefonnummer (geschäftlich)'))	
         }
         Set-ADUser @SetADUserSplatHash  -WhatIf
     }
@@ -44,4 +62,4 @@ $NotFoundList
 
 #Press any key before closing the PowerShell window
 Write-Host "Press any key to close this window..."
-$null = $Host.UI.RawUI.ReadKey('NoEcho,IncludeKeyDown')
+#$null = $Host.UI.RawUI.ReadKey('NoEcho,IncludeKeyDown')
