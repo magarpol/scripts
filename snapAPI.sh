@@ -1,38 +1,73 @@
 #!/bin/bash
 
-##########################################################
-# Optimized Script for Installing Acronis SnapAPI Module #
-##########################################################
-
-cd /usr/lib/Acronis/kernel_modules/
-
-# Extract the snapapi archive
-tar xvfz snapapi26-0.8.31-all.tar.gz
-
-mkdir -p "/usr/lib/Acronis/kernel_modules/snapapi26-0.8.42" 
-
-# Move DKMS source files to the version specific directory
-mv /usr/lib/Acronis/kernel_modules/dkms_source_tree/* "usr/src/snapapi26-0.8.42/" 
-
-# Update dkms.conf to comment out REMAKE_INITRD
-sed 's/REMAKE_INITRD/#REMAKE_INITRD/' -i "/usr/src/snapapi26-0.8.42/dkms.conf" 
-
-# Install the required headers package
-apt update
-apt install -y linux-headers-$(uname -r) 
-
-# Build and install the DKMS module
-dkms build -m snapapi26 -v 0.8.42 --config /boot/config-$(uname -r) --arch $(uname -p)
-
-# Load the module and restart the Acronis service
-modprobe snapapi26 
-systemctl restart acronis_mms 
-
-# Add a kernel post installation script to install headers
-cat << 'EOF' > /etc/kernel/postinst.d/install-headers
 #!/bin/bash
-apt-get install -y linux-headers-$(uname -r)
-EOF
-chmod 755 /etc/kernel/postinst.d/install-headers 
+
+##########################################################
+#         Optimized Script for snapAPI error             #
+##########################################################
+
+#!/bin/bash
+
+# Navigate to the Acronis kernel modules directory
+echo "Navigating to /usr/lib/Acronis/kernel_modules/"
+cd /usr/lib/Acronis/kernel_modules/ || { echo "Directory not found! Exiting."; exit 1; }
+
+# Extract version numbers from the tar.gz file
+SNAP_TAR=$(ls snapapi26-*.tar.gz | head -n 1)
+if [[ -z "$SNAP_TAR" ]]; then
+    echo "No snapapi26 tarball found! Exiting."
+    exit 1
+fi
+
+VERSION=$(echo "$SNAP_TAR" | grep -oP '\d+\.\d+\.\d+' | head -n 1)
+echo "Detected version: $VERSION"
+
+# Extract the tarball
+echo "Extracting $SNAP_TAR"
+tar xvfz "$SNAP_TAR"
+
+# Create the required directory
+echo "Creating directory /usr/src/snapapi26-$VERSION"
+mkdir -p "/usr/src/snapapi26-$VERSION"
+
+# Move files to the new directory
+echo "Moving files to /usr/src/snapapi26-$VERSION"
+mv /usr/lib/Acronis/kernel_modules/dkms_source_tree/* "/usr/src/snapapi26-$VERSION/"
+
+# Modify the dkms.conf file
+echo "Modifying dkms.conf to comment out REMAKE_INITRD"
+sed 's/REMAKE_INITRD/#REMAKE_INITRD/' -i "/usr/src/snapapi26-$VERSION/dkms.conf"
+
+# Update package lists
+echo "Updating package lists"
+apt update
+
+# Ask for kernel headers input
+echo "Please enter the kernel version (e.g., 6.1.0-29-cloud-amd64):"
+read -r KERNEL_VERSION
+if [[ -z "$KERNEL_VERSION" ]]; then
+    echo "No kernel version provided. Exiting."
+    exit 1
+fi
+
+# Install the specified kernel headers
+echo "Installing linux-headers-$KERNEL_VERSION"
+apt install -y "linux-headers-$KERNEL_VERSION"
+
+# Build the DKMS module
+echo "Building DKMS module snapapi26 version $VERSION"
+dkms build -m snapapi26 -v "$VERSION" --config /boot/config-$(uname -r) --arch $(uname -p)
+
+# Install the DKMS module
+echo "Installing DKMS module snapapi26 version $VERSION"
+dkms install -m snapapi26 -v "$VERSION"
+
+# Load the module
+echo "Loading module snapapi26"
+modprobe snapapi26
+
+# Restart the Acronis service
+echo "Restarting Acronis service"
+systemctl restart acronis_mms
 
 echo "Script completed successfully."
