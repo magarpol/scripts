@@ -186,6 +186,14 @@ for user in $all_users; do
             echo "SSH configuration for $new_name has been created."
 
             copy_public_key "$new_name"
+            #Append SSH configuration for the users
+		    bash -c "cat >> /etc/ssh/sshd_config <<EOF
+		
+Match User $new_name
+  PubkeyAuthentication yes
+  AuthenticationMethods publickey
+  
+EOF"
         else
             echo "Skipped creating home directory and SSH configuration for $new_name."
         fi
