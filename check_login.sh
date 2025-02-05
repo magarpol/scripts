@@ -1,9 +1,14 @@
 #!/bin/bash
 
-# CheckMK local checks for sucessful login attempts
-# Author: Mauro García
-# Version: 1.0
-# Description: Logs into multiple URLs and triggers an alert if login fails
+# ============================================================================
+# Script Name:    username_migration.sh
+# Author:         Mauro García
+# Version:        1.0
+# Description:    Logs into multiple URLs and triggers an alert if login fails 
+# Repository:     https://github.com/magarpol/scripts
+# Last Updated:   2025-01-30
+# ============================================================================
+
 
 # CheckMK output format: <status> <service_name> - <message>
 # Status: 0 = OK, 1 = WARNING, 2 = CRITICAL
