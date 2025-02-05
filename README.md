@@ -50,6 +50,9 @@ This script takes info from /root folder, creates the new users and move the Pub
 ### Users and SSH
 This script creates users, stores the Public Key in the right location and changes sudoers and sshd configuration.
 
+### Users and SSH email
+This script creates users and Public Keys, configures the	sshd configuration and send an email to users with OTP password
+
 ### Users and SSH RHEL
 This script creates users, stores the Public Key in the right location and changes sudoers and sshd configuration in RHEL Servers.
 
