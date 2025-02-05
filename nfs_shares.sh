@@ -1,4 +1,12 @@
 #!/bin/bash
+# ============================================================================
+# Script Name:    nfs_shares.sh
+# Author:         Mauro García
+# Version:        1.0
+# Description:    This script mount NFS Shares in locations typed by the user
+# Repository:     https://github.com/magarpol/scripts
+# Last Updated:   2025-01-30
+# ============================================================================
 
 # User input for mount directory
 mount_directory() {
