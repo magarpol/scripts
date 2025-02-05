@@ -17,6 +17,9 @@ This script takes info from a .cv file and updates AD.
 ### Add NIS account
 This script add a NIS account.
 
+### APT Updates
+This script configures APT updates service in CheckMK
+
 ### Check Login
 This script check logins on a number of websites.
 
