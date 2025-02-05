@@ -1,5 +1,15 @@
 #!/bin/bash
 
+# ============================================================================
+# Script Name:    delete_nis_account.sh
+# Author:         Mauro García
+# Version:        1.0
+# Description:    This script deletes a NIS account
+# Repository:     https://github.com/magarpol/scripts
+# Last Updated:   2025-01-30
+# ============================================================================
+
+
 #Prompt the user for the username to delete
 read -p "Enter the username to delete: " username 
 
