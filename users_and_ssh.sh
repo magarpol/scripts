@@ -17,14 +17,12 @@ publickeys=(
         ""
         ""
 )
-passwords=("password1" "password2" "password3")
 
 #Loop through every user for creation and configuration
 for i in "${!usernames[@]}"; do
 
         username="${usernames[$i]}"
         publicKey="${publickeys[$i]}"
-	password="${passwords[$i]}"
 
         #Check OS and set useradd/adduser command
         if [ -f /etc/os-release ]; then
@@ -34,16 +32,12 @@ for i in "${!usernames[@]}"; do
                 else
                         adduser --gecos "" --disabled-password "$username" || { echo "Failed to create user $username"; continue; }
                 fi
+		# Expire password to force change on first login
+  		passwd --expire "$username"
         else
                 echo "/etc/os-release not found, cannot determine OS type"
                 continue
         fi
-
- 	#Set password for user
-  	echo "$username:$password" | chpasswd
-
-   	#Force user to change password at first login
-    	chage -d 0 "$username"
 
         #Add user to sudo group
         usermod -aG sudo "$username"
