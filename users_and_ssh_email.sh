@@ -1,3 +1,15 @@
+
+
+# ============================================================================
+# Script Name:    users_and_ssh_email.sh
+# Author:         Mauro García
+# Version:        2.0
+# Description:    This script creates users and Public Keys, configures the	
+#                 sshd configuration and send an email to users with OTP password
+# Repository:     https://github.com/magarpol/scripts
+# Last Updated:   2025-01-30
+# ============================================================================
+
 usernames=("")
 publickeys=(
     ""
