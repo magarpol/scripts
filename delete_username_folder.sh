@@ -1,5 +1,15 @@
 #!/bin/bash
 
+# ============================================================================
+# Script Name:    username_folde.sh
+# Author:         Mauro García
+# Version:        2.1
+# Description:    This script deletes the system folder from a certain username
+# Repository:     https://github.com/magarpol/scripts
+# Last Updated:   2025-01-30
+# ============================================================================
+
+
 #Prompt the username
 read -p "Enter the folder to delete: " username
 
