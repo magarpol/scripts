@@ -1,5 +1,13 @@
 #!/bin/bash
- 
+# ============================================================================
+# Script Name:    mount_crypt.sh
+# Author:         Mauro García
+# Version:        1.0
+# Description:    Encrypt LVM and mount Docker
+# Repository:     https://github.com/magarpol/scripts
+# Last Updated:   2025-01-30
+# ============================================================================
+
 echo
 echo "#"
 echo "# /home/deployment"
