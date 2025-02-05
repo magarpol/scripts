@@ -4,13 +4,11 @@
 usernames=("")
 publickeys=(""
 )
-passwords=("")
 
 for i in "${!usernames[@]}"; do
 
     username="${usernames[$i]}"
     publicKey="${publickeys[$i]}"
-    password="${passwords[$i]}"
 
     # Check if the user already exists
     if id "$username" &>/dev/null; then
@@ -21,11 +19,8 @@ for i in "${!usernames[@]}"; do
     # Create user and check for success
     useradd -m "$username" || { echo "Failed to create user $username"; continue; }
 
-    # Set password for the user
-    echo "$username:$password" | chpasswd
-
-    # Force the user to change the password at first login
-    chage -d 0 "$username"
+    # Expire password to force change on first login
+    passwd --expire "$username"
 
     # Add user to the wheel group (for sudo access on RHEL 8)
     usermod -aG wheel "$username"
