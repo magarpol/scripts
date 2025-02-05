@@ -20,7 +20,8 @@ for i in "${!usernames[@]}"; do
     useradd -m "$username" || { echo "Failed to create user $username"; continue; }
 
     # Expire password to force change on first login
-    passwd --expire "$username"
+    passwd -d "$username"
+    chage -d 0 "$username"
 
     # Add user to the wheel group (for sudo access on RHEL 8)
     usermod -aG wheel "$username"
