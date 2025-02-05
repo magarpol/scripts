@@ -8,13 +8,6 @@
 # Last Updated:   2025-01-30
 # ============================================================================
 
-# Usage:
-#   ./username_migration.sh
-#
-# Notes:
-# - Ensure you have a backup before running.
-# - Run this script with root privileges.
-
 apt install python3-docker
 cd /tmp/
 cp mk_docker.py /usr/lib/check_mk_agent/plugins/
