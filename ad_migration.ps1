@@ -3,6 +3,22 @@ $csvData = Import-Csv -Path 'C:\mydata.csv' -encoding UTF8
 #Fields CSV
 #Vorname (bÃ¼rgerlich),"Nachname (bÃ¼rgerlich)","E-Mail","Abteilung","Position","Gesellschaft","Team","Name (bevorzugt)","Status","FÃ¼hrungskraft","Austrittsdatum","Telefonnummer (geschÃ¤ftlich)"
 
+# ============================================================================
+# Script Name:    ad_migration.ps1
+# Author:         Mauro García
+# Version:        2.1
+# Description:    This script takes data from a .csv file and update the info in Active Directory
+# Repository:     https://github.com/magarpol/scripts
+# Last Updated:   2025-01-30
+# ============================================================================
+
+# Usage:
+#   ./username_migration.sh
+#
+# Notes:
+# - Ensure you have a backup before running.
+# - Run this script with root privileges.
+
 $NotFoundList = @()
 
 Foreach($row in $csvData){
