@@ -10,3 +10,6 @@ cd scripts
 ```
 
 ## Scripts Descriptions
+
+### Ad migration
+This script takes info from a .cv file and updates AD
