@@ -33,7 +33,8 @@ for i in "${!usernames[@]}"; do
                         adduser --gecos "" --disabled-password "$username" || { echo "Failed to create user $username"; continue; }
                 fi
 		# Expire password to force change on first login
-  		passwd --expire "$username"
+  		passwd -d "$username"
+                chage -d 0 "$username"
         else
                 echo "/etc/os-release not found, cannot determine OS type"
                 continue
