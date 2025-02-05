@@ -1,6 +1,15 @@
 #!/bin/bash
 
-#!/bin/bash
+# ============================================================================
+# Script Name:    snap_api.sh
+# Author:         Mauro García
+# Version:        1.0
+# Description:    This script solves the snapAPI error from Acronis, the kernel
+#                 version must be entered manually
+# Repository:     https://github.com/magarpol/scripts
+# Last Updated:   2025-01-30
+# ============================================================================
+
 
 ##########################################################
 #         Optimized Script for snapAPI error             #
