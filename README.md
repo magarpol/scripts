@@ -1,4 +1,4 @@
-# SCRIPTS
+# Scripts
 
 ## Description
 This repository contains scripts for daily/weekly work.
