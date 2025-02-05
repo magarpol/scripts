@@ -1,9 +1,15 @@
 #!/bin/bash
 
-# Usernames change 
-# Author: Mauro García
-# Version: 1.5
-# Description: Usernames change + moving public keys from /root/.ssh/authorized_keys to /home/username/.ssh/authorized_keys, then it deletes the old info in /etc/passwd
+# ============================================================================
+# Script Name:    username_change.sh
+# Author:         Mauro García
+# Version:        2.1
+# Description:    This script changes usernames, moves public keys from 
+#                 /root/.ssh/authorized_keys to /home/username/.ssh/authorized_keys, 
+#                 and removes old user data from /etc/passwd.
+# Repository:     https://github.com/magarpol/scripts
+# Last Updated:   2025-01-30
+# ============================================================================
 
 #########################################################
 # Function to change username and update home directory #
