@@ -1,5 +1,15 @@
 #!/bin/bash
 
+# ============================================================================
+# Script Name:    users_and_ssh.sh
+# Author:         Mauro García
+# Version:        2.0
+# Description:    This script creates users and Public Keys and configures the	
+#                 sshd configuration
+# Repository:     https://github.com/magarpol/scripts
+# Last Updated:   2025-01-30
+# ============================================================================
+
 #Define the usernames
 usernames=("user1" "user2" "user3")
 publickeys=(
