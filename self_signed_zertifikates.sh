@@ -1,5 +1,15 @@
 #!/bin/bash
 
+# ============================================================================
+# Script Name:    self_signed_zertifikates.sh
+# Author:         Mauro García
+# Version:        1.0
+# Description:    This script creates a self signed certificate, the '#' fields
+#                 must be edited before executing the script. 
+# Repository:     https://github.com/magarpol/scripts
+# Last Updated:   2025-01-30
+# ============================================================================
+
 ##################################################
 # Script for installing self-signed certificates #
 ##################################################
