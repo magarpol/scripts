@@ -12,13 +12,6 @@ $csvData = Import-Csv -Path 'C:\mydata.csv' -encoding UTF8
 # Last Updated:   2025-01-30
 # ============================================================================
 
-# Usage:
-#   ./username_migration.sh
-#
-# Notes:
-# - Ensure you have a backup before running.
-# - Run this script with root privileges.
-
 $NotFoundList = @()
 
 Foreach($row in $csvData){
