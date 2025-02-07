@@ -17,6 +17,9 @@ This script configures APT updates service in CheckMK
 ### Check Login
 This script check logins on a number of websites.
 
+### Check xz utils version
+This script check if xz-utils is installed, if it´s vulnerable and if an update is available.
+
 ### Delete NIS account
 This script deletes a NIS account.
 
