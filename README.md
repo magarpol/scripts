@@ -3,6 +3,9 @@
 ## Description
 This repository contains scripts for daily/weekly work.
 
+## Data directory
+This directory contains files that are necessary for scripts execution i.e. some CheckMK services configuration
+
 ## Scripts Descriptions
 
 ### Ad migration
