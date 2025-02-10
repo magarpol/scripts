@@ -13,6 +13,8 @@
 # 0 Hostname_IPs - darkstar // 192.168.1.2
 # 0 Kernel_Cmdline - BOOT_IMAGE=/vmlinuz-4.15.0-45-generic root=/dev/mapper/system-ubuntu ro nvidia-drm.modeset=1
 
+# This file needs to be stored in /usr/lib/check_mk_agent/local/ and then chmod +x
+
 if type uname >/dev/null 2>&1 ; then
   echo "0 Uname - $(uname -a)"
 fi
