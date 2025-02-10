@@ -50,6 +50,9 @@ This script solves the snapAPI Acronis error.
 ### SSH Key Generator
 This script creates a 4096 Key Pair in Windows Systems.
 
+### Update Docker GPG key
+This script creates directories for keyrings, moves the Docker GPG key to secure location and updates the repository file.
+
 ### Username Change
 This script takes info from /root folder, creates the new users and move the Public Keys to the right location. After that it deletes the old info from users.
 
