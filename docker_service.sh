@@ -9,7 +9,6 @@
 # ============================================================================
 
 apt install python3-docker
-cd /scripts/data/
 cp /scripts/data/mk_docker.py /usr/lib/check_mk_agent/plugins/
 cp /scripts/data/docker.cfg /usr/lib/check_mk_agent/plugins/
 chmod 0755 /usr/lib/check_mk_agent/plugins/mk_docker.py
