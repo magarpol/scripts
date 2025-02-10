@@ -121,10 +121,6 @@ cleanup_passwd_entry() {
     fi
 }
 
-#copy_public_key "$new_name"
-#echo "Public key has been moved for "$new_username""
-#cleanup_password_entry
-
 
 ############################
 # Prevent locking user out #
