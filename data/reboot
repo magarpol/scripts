@@ -11,6 +11,8 @@
 # 
 # 0 Reboot_needed - No system reboot needed
 
+# This file needs to be stored in /usr/lib/check_mk_agent/local/ and then chmod +x
+
 CHECK='"Reboot needed"'
 SEVERITY=2  # 1=WARN, 2=CRIT
 
