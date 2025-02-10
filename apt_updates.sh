@@ -10,6 +10,6 @@
 # ============================================================================
 
 #APT Update plugin in Linux servers
-cp /tmp/mk_apt /usr/lib/check_mk_agent/plugins/
+cp /scripts/data/mk_apt /usr/lib/check_mk_agent/plugins/
 chmod 755 /usr/lib/check_mk_agent/plugins/mk_apt
 systemctl restart check-mk-agent.socket
