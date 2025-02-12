@@ -23,6 +23,9 @@ This script check logins on a number of websites.
 ### Check xz utils version
 This script check if xz-utils is installed, if it´s vulnerable and if an update is available.
 
+### CheckMK Services
+This script configures services after installing CheckMK agent on Servers. 
+
 ### Delete NIS account
 This script deletes a NIS account.
 
