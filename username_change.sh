@@ -18,19 +18,16 @@ change_username() {
     local old_username=$1
     local new_username=$2
 
-    # Rename user
     usermod -l "$new_username" "$old_username"
-
-    # Rename home directory
     usermod -d "/home/$new_username" -m "$new_username"
-
+    
     mkdir -p "/home/$new_username/.ssh"
     chmod 700 "/home/$new_username/.ssh"
     touch "/home/$new_username/.ssh/authorized_keys"
     chmod 600 "/home/$new_username/.ssh/authorized_keys"
     chown "$new_username:$new_username" "/home/$new_username/.ssh" "/home/$new_username/.ssh/authorized_keys"
 
-    echo "User $old_username has been renamed to $new_username and home directory updated."
+    echo "User $old_username renamed to $new_username and home directory initialized."
 }
 
 ##################################################
@@ -64,6 +61,11 @@ copy_public_key() {
     local root_ssh_file="/root/.ssh/authorized_keys"
     local user_ssh_file="/home/$new_name/.ssh/authorized_keys"
 
+    if [ -z "$new_name" ]; then
+        echo "Error: Username not set correctly. Exiting."
+        return
+    fi
+
     echo "Available public keys in /root/.ssh/authorized_keys:"
     awk '/^ssh-(rsa|dss|ecdsa|ed25519)/ {print NR " ) " substr($0, length($0)-25, 24)}' "$root_ssh_file"
 
@@ -77,7 +79,7 @@ copy_public_key() {
     selected_key=$(awk "NR == $key_choice {print}" "$root_ssh_file")
 
     if [ -n "$selected_key" ]; then
-        echo "$selected_key" > "$user_ssh_file"
+        echo "$selected_key" >> "$user_ssh_file"
         chmod 600 "$user_ssh_file"
         chown "$new_name:$new_name" "$user_ssh_file"
 
@@ -87,6 +89,7 @@ copy_public_key() {
         echo "Invalid key selection."
     fi
 }
+
 
 #################################################
 # Function to clean up :0:0: entries in passwd  #
@@ -117,20 +120,10 @@ cleanup_passwd_entry() {
     fi
 
     change_username "$selected_user" "$new_name"
+
+    # Now call copy_public_key with the correct new_name
+    copy_public_key "$new_name"
 }
-
-# Ensure cleanup is explicitly called after setting up the user
-copy_public_key "$new_name"
-echo "Public key has been moved for $new_name."
-cleanup_passwd_entry  # Prompt for cleanup before proceeding
-
-# Confirmation before moving to the next user
-read -p "Press Enter to proceed to the next user, or Ctrl+C to stop: " proceed
-
-
-# Call cleanup after moving the public key
-copy_public_key "$new_name"
-cleanup_passwd_entry
 
 ############################
 # Prevent locking user out #
