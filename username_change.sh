@@ -76,7 +76,7 @@ copy_public_key() {
 
     # Gather Keys from /root/.ssh/authorized_keys
     echo "Available public keys in /root/.ssh/authorized_keys:"
-    awk '/^ssh-(rsa|dss|ecdsa|ed25519)/ {print NR " ) " substr($0, length($0)-9, 20)}' "$root_ssh_file"
+    awk '/^ssh-(rsa|dss|ecdsa|ed25519)/ {print NR " ) " substr($0, length($0)-25, 24)}' "$root_ssh_file"
     read -p "Enter the number of the public key to copy: " key_choice
 
     # If no key selected, skip
