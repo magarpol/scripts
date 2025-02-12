@@ -24,6 +24,12 @@ change_username() {
     # Rename home directory
     usermod -d "/home/$new_username" -m "$new_username"
 
+    mkdir -p "/home/$new_username/.ssh"
+    chmod 700 "/home/$new_username/.ssh"
+    touch "/home/$new_username/.ssh/authorized_keys"
+    chmod 600 "/home/$new_username/.ssh/authorized_keys"
+    chown "$new_username:$new_username" "/home/$new_username/.ssh" "/home/$new_username/.ssh/authorized_keys"
+
     echo "User $old_username has been renamed to $new_username and home directory updated."
 }
 
@@ -56,42 +62,27 @@ delete_user() {
 copy_public_key() {
     local new_name=$1
     local root_ssh_file="/root/.ssh/authorized_keys"
-    local user_ssh_dir="/home/$new_name/.ssh"
-    local user_ssh_file="$user_ssh_dir/authorized_keys"
+    local user_ssh_file="/home/$new_name/.ssh/authorized_keys"
 
-    # Ensure new_name is set
-    if [ -z "$new_name" ]; then
-        echo "Error: new_name is empty. Cannot proceed with key copy."
-        return
-    fi
-
-    # Ensure user SSH directory exists
-    mkdir -p "$user_ssh_dir"
-    chmod 700 "$user_ssh_dir"
-    chown "$new_name:$new_name" "$user_ssh_dir"
-
-    # Gather Keys from /root/.ssh/authorized_keys
     echo "Available public keys in /root/.ssh/authorized_keys:"
     awk '/^ssh-(rsa|dss|ecdsa|ed25519)/ {print NR " ) " substr($0, length($0)-25, 24)}' "$root_ssh_file"
-    read -p "Enter the number of the public key to copy: " key_choice
 
-    # If no key selected, skip
+    read -p "Enter the number of the public key to move: " key_choice
     if [ -z "$key_choice" ]; then
-        echo "No key selected. Skipping key copy."
+        echo "No key selected. Skipping key move."
         return
     fi
 
-    # Write the selected key to the new user's authorized_keys
     local selected_key
     selected_key=$(awk "NR == $key_choice {print}" "$root_ssh_file")
+
     if [ -n "$selected_key" ]; then
         echo "$selected_key" > "$user_ssh_file"
         chmod 600 "$user_ssh_file"
         chown "$new_name:$new_name" "$user_ssh_file"
 
-        # Remove the key from root's authorized_keys
         sed -i "${key_choice}d" "$root_ssh_file"
-        echo "Selected public key has been moved to $user_ssh_file and removed from $root_ssh_file."
+        echo "Public key moved to $user_ssh_file and removed from $root_ssh_file."
     else
         echo "Invalid key selection."
     fi
@@ -102,42 +93,30 @@ copy_public_key() {
 #################################################
 cleanup_passwd_entry() {
     local passwd_file="/etc/passwd"
+    echo "Listing all ':0:0:' entries in $passwd_file:"
+    awk -F: '$3 == 0 && $4 == 0 {print NR " ) " $1 " (UID: " $3 ", GID: " $4 ")"}' "$passwd_file"
 
-    # Find all entries containing ":0:0:"
-    local invalid_entries
-    invalid_entries=$(awk -F: '$3 == 0 && $4 == 0 {print NR " ) " $0}' "$passwd_file")
+    read -p "Enter the number of the account to modify (or press Enter to skip): " entry_choice
 
-    # If no invalid entries are found, exit
-    if [ -z "$invalid_entries" ]; then
-        echo "No invalid ':0:0:' entries found in $passwd_file for cleanup."
+    if [ -z "$entry_choice" ]; then
+        echo "No account selected. Exiting."
         return
     fi
 
-    echo "Invalid ':0:0:' entries found:"
-    echo "$invalid_entries"
+    selected_user=$(awk -F: -v choice="$entry_choice" '$3 == 0 && $4 == 0 {if (NR == choice) print $1}' "$passwd_file")
 
-    # Loop until the user selects an entry or decides to skip
-    while true; do
-        read -p "Enter the number of the entry to delete (or press Enter to skip): " entry_choice
+    if [ -z "$selected_user" ]; then
+        echo "Invalid selection. Exiting."
+        return
+    fi
 
-        # If no entry is selected, break the loop
-        if [ -z "$entry_choice" ]; then
-            echo "No entry selected. Skipping cleanup."
-            break
-        fi
+    read -p "Enter new username for $selected_user: " new_name
+    if [ -z "$new_name" ]; then
+        echo "New username cannot be empty. Exiting."
+        return
+    fi
 
-        # Validate the input and delete the selected entry
-        local line_to_delete
-        line_to_delete=$(awk -v choice="$entry_choice" -F: '$3 == 0 && $4 == 0 {if (NR == choice) print NR}' "$passwd_file")
-
-        if [ -n "$line_to_delete" ]; then
-            sed -i "${line_to_delete}d" "$passwd_file"
-            echo "Entry number $entry_choice has been removed from $passwd_file."
-            break
-        else
-            echo "Invalid selection. Please try again."
-        fi
-    done
+    change_username "$selected_user" "$new_name"
 }
 
 # Ensure cleanup is explicitly called after setting up the user
@@ -205,12 +184,6 @@ for user in $all_users; do
         usermod -aG sudo "$new_name"
     fi
 
-    mkdir -p "/home/$new_name/.ssh"
-    chmod 700 "/home/$new_name/.ssh"
-    touch "/home/$new_name/.ssh/authorized_keys"
-    chmod 600 "/home/$new_name/.ssh/authorized_keys"
-    chown "$new_name:$new_name" "/home/$new_name/.ssh" "/home/$new_name/.ssh/authorized_keys"
-
     copy_public_key "$new_name"
 done
 
@@ -218,6 +191,9 @@ done
 # Clean up /etc/passwd invalid data #
 #####################################
 cleanup_passwd_entry
+copy_public_key "$new_name"
+backup_old_data "$selected_user"
+delete_user_entry "$selected_user"
 
 ###########################
 # Prompt to delete a user #
