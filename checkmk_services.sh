@@ -26,7 +26,6 @@ echo "Docker service configured"
 ###############
 cp /scripts/data/mk_apt /usr/lib/check_mk_agent/plugins/
 chmod 755 /usr/lib/check_mk_agent/plugins/mk_apt
-systemctl restart check-mk-agent.socket
 
 echo "APT Updates service configured"
 
@@ -45,3 +44,7 @@ cp /scripts/data/reboot /usr/lib/check_mk_agent/plugins/
 chmod +x /usr/lib/check_mk_agent/plugins/reboot
 
 echo "Reboot service configured"
+
+systemctl restart check-mk-agent.socket
+
+echo "CheckMK service restarted"
