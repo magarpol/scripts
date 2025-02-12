@@ -27,41 +27,6 @@ change_username() {
     echo "User $old_username has been renamed to $new_username and home directory updated."
 }
 
-################################################
-# Function to process sudo users with SSH keys #
-################################################
-process_sudo_users() {
-    local sudo_users
-    sudo_users=$(getent group sudo | cut -d: -f4 | tr ',' ' ')
-
-    if [[ -z "$sudo_users" ]]; then
-        echo "No sudo users found."
-        return
-    fi
-
-    echo "The following sudo users have SSH keys:"
-    
-    for user in $sudo_users; do
-        if [[ -f "/home/$user/.ssh/authorized_keys" ]]; then
-            echo "- $user"
-        fi
-    done
-
-    for user in $sudo_users; do
-        if [[ -f "/home/$user/.ssh/authorized_keys" ]]; then
-            read -p "Do you want to rotate SSH keys for $user? (y/n): " rotate_key
-            if [[ "$rotate_key" == "y" || "$rotate_key" == "Y" ]]; then
-                echo "Rotating SSH keys for $user..."
-                mv "/home/$user/.ssh/authorized_keys" "/home/$user/.ssh/authorized_keys.old"
-                touch "/home/$user/.ssh/authorized_keys"
-                chown "$user:sudo" "/home/$user/.ssh/authorized_keys"
-                chmod 600 "/home/$user/.ssh/authorized_keys"
-                echo "Old keys backed up. New authorized_keys file created for $user."
-            fi
-        fi
-    done
-}
-
 ##################################################
 # Function to delete old users with data zipping #
 ##################################################
