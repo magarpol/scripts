@@ -167,36 +167,6 @@ cleanup_passwd_entry() {
     fi
 }
 
-###############################################
-# Function to handle multiple users UID + SSH #
-###############################################
-handle_uid_0_users() {
-    local passwd_file="/etc/passwd"
-
-    # Find all UID 0 users except root
-    local uid_0_users
-    uid_0_users=$(awk -F: '$3 == && $1 != "root" {print $1}' "$passwd_file")
-
-    if [[ -z "$uid_0_users"]]; then
-        echo "No users with UID 0 found."
-        return
-    fi
-
-    echo "Users with UID 0 found:"
-    echo "$uid_0_users"
-
-    for user in $uid_0_users; do
-        echo "User $user has UID 0"
-        read -p "Do you want to change the UID for $user? (y/n): " change_uid
-
-        if [[ "$change_uid" == "y" || "$change_uid" == "Y" ]]; then
-            new_uid=$((RANDOM % 60000 + 1000))
-            usermod -u "$new_uid" "$user"
-            echo "User $user now has UID $new_uid."
-        fi
-    done 
-}
-
 ############################
 # Prevent locking user out #
 ############################
