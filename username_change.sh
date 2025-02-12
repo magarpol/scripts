@@ -27,26 +27,71 @@ change_username() {
     echo "User $old_username has been renamed to $new_username and home directory updated."
 }
 
+################################################
+# Function to process sudo users with SSH keys #
+################################################
+process_sudo_users() {
+    local sudo_users
+    sudo_users=$(getent group sudo | cut -d: -f4 | tr ',' ' ')
+
+    if [[ -z "$sudo_users" ]]; then
+        echo "No sudo users found."
+        return
+    fi
+
+    echo "The following sudo users have SSH keys:"
+    
+    for user in $sudo_users; do
+        if [[ -f "/home/$user/.ssh/authorized_keys" ]]; then
+            echo "- $user"
+        fi
+    done
+
+    for user in $sudo_users; do
+        if [[ -f "/home/$user/.ssh/authorized_keys" ]]; then
+            read -p "Do you want to rotate SSH keys for $user? (y/n): " rotate_key
+            if [[ "$rotate_key" == "y" || "$rotate_key" == "Y" ]]; then
+                echo "Rotating SSH keys for $user..."
+                mv "/home/$user/.ssh/authorized_keys" "/home/$user/.ssh/authorized_keys.old"
+                touch "/home/$user/.ssh/authorized_keys"
+                chown "$user:sudo" "/home/$user/.ssh/authorized_keys"
+                chmod 600 "/home/$user/.ssh/authorized_keys"
+                echo "Old keys backed up. New authorized_keys file created for $user."
+            fi
+        fi
+    done
+}
+
 ##################################################
 # Function to delete old users with data zipping #
 ##################################################
 delete_user() {
-    local username=$1
-    local admin_home="/tmp"
-    local backup_dir="${admin_home}/user_backups"
+    local old_username=$1
+    local new_username=$2
+    local new_user_home="/home/${new_username}"
+    local backup_dir="${new_user_home}/user_backups"
+
+    if [[ -z "$new_username" || !-d "$new_user_home"]]; then
+        echo "Error: New user $new_username does not exist."
+        return 1
+    fi
 
     mkdir -p "$backup_dir"  # Review backup directory exists
 
-    if id "$username" &>/dev/null; then
-        echo "Creating backup for $username..."
-        tar -czf "${backup_dir}/${username}.tar.gz" "/home/$username" &>/dev/null
-        echo "Backup created at ${backup_dir}/${username}.tar.gz"
+    if id "$old_username" &>/dev/null; then
+        echo "Creating backup for $old_username..."
+        tar -czf "${backup_dir}/${old_username}.tar.gz" "/home/$new_username" &>/dev/null
+        echo "Backup created at ${backup_dir}/${new_username}.tar.gz"
 
-        echo "Deleting user $username..."
-        userdel -r "$username"
-        echo "User $username has been deleted."
+        # Ownership
+        chown -R "${new_username}:${new_username}" "$backup_dir"
+        chmod -R 700 "$backup_dir"
+
+        echo "Deleting user $old_username..."
+        userdel -r "$old_username"
+        echo "User $old_username has been deleted."
     else
-        echo "User $username does not exist."
+        echo "User $old_username does not exist."
     fi
 }
 
@@ -79,6 +124,42 @@ copy_public_key() {
     # Remove the key from root authorized_keys
     sed -i "${key_choice}d" "$root_ssh_file"
     echo "Selected public key has been copied to $user_ssh_file and removed from $root_ssh_file."
+}
+
+#########################################################
+# Function to move individual users' SSH keys from root #
+#########################################################
+move_root_ssh_keys() {
+    local root_ssh_file="/root/.ssh/authorized_keys"
+    
+    if [[ ! -f "$root_ssh_file" ]]; then
+        echo "No SSH keys found in /root/.ssh/authorized_keys."
+        return
+    fi
+
+    echo "Identifying SSH keys belonging to individual users..."
+    
+    while read -r line; do
+        key_user=$(echo "$line" | awk '{print $3}')
+        
+        if id "$key_user" &>/dev/null; then
+            user_ssh_dir="/home/$key_user/.ssh"
+            user_ssh_file="$user_ssh_dir/authorized_keys"
+
+            mkdir -p "$user_ssh_dir"
+            touch "$user_ssh_file"
+            chmod 700 "$user_ssh_dir"
+            chmod 600 "$user_ssh_file"
+            chown "$key_user:sudo" "$user_ssh_dir" "$user_ssh_file"
+
+            echo "$line" >> "$user_ssh_file"
+            echo "SSH key for $key_user moved to $user_ssh_file."
+        fi
+    done < "$root_ssh_file"
+
+    # Optional: Clear root authorized_keys if all keys were moved
+    > "$root_ssh_file"
+    echo "Root's authorized_keys file has been cleared."
 }
 
 #################################################
@@ -121,6 +202,35 @@ cleanup_passwd_entry() {
     fi
 }
 
+###############################################
+# Function to handle multiple users UID + SSH #
+###############################################
+handle_uid_0_users() {
+    local passwd_file="/etc/passwd"
+
+    # Find all UID 0 users except root
+    local uid_0_users
+    uid_0_users=$(awk -F: '$3 == && $1 != "root" {print $1}' "$passwd_file")
+
+    if [[ -z "$uid_0_users"]]; then
+        echo "No users with UID 0 found."
+        return
+    fi
+
+    echo "Users with UID 0 found:"
+    echo "$uid_0_users"
+
+    for user in $uid_0_users; do
+        echo "User $user has UID 0"
+        read -p "Do you want to change the UID for $user? (y/n): " change_uid
+
+        if [[ "$change_uid" == "y" || "$change_uid" == "Y" ]]; then
+            new_uid=$((RANDOM % 60000 + 1000))
+            usermod -u "$new_uid" "$user"
+            echo "User $user now has UID $new_uid."
+        fi
+    done 
+}
 
 ############################
 # Prevent locking user out #
@@ -201,8 +311,11 @@ EOF"
         fi
     fi
 
-    # Call cleanup_passwd_entry after handling the user
+    # Call functions after handling the user
     cleanup_passwd_entry
+    handle_uid_0_users
+    process_sudo_users
+    move_root_ssh_keys
 
     # Confirmation before moving to the next user
     read -p "Press enter to proceed to the next user, or ctrl+c to stop: " proceed
