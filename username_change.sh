@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# ============================================================================
+# ==================================================================================
 # Script Name:    username_change.sh
 # Author:         Mauro García
 # Version:        2.1
@@ -9,7 +9,7 @@
 #                 and removes old user data from /etc/passwd.
 # Repository:     https://github.com/magarpol/scripts
 # Last Updated:   2025-01-30
-# ============================================================================
+# ==================================================================================
 
 #########################################################
 # Function to change username and update home directory #
@@ -31,32 +31,22 @@ change_username() {
 # Function to delete old users with data zipping #
 ##################################################
 delete_user() {
-    local old_username=$1
-    local new_username=$2
-    local new_user_home="/home/${new_username}"
-    local backup_dir="${new_user_home}/user_backups"
-
-    if [[ -z "$new_username" || !-d "$new_user_home"]]; then
-        echo "Error: New user $new_username does not exist."
-        return 1
-    fi
+    local username=$1
+    local admin_home="/tmp"
+    local backup_dir="${admin_home}/user_backups"
 
     mkdir -p "$backup_dir"  # Review backup directory exists
 
-    if id "$old_username" &>/dev/null; then
-        echo "Creating backup for $old_username..."
-        tar -czf "${backup_dir}/${old_username}.tar.gz" "/home/$new_username" &>/dev/null
-        echo "Backup created at ${backup_dir}/${new_username}.tar.gz"
+    if id "$username" &>/dev/null; then
+        echo "Creating backup for $username..."
+        tar -czf "${backup_dir}/${username}.tar.gz" "/home/$username" &>/dev/null
+        echo "Backup created at ${backup_dir}/${username}.tar.gz"
 
-        # Ownership
-        chown -R "${new_username}:${new_username}" "$backup_dir"
-        chmod -R 700 "$backup_dir"
-
-        echo "Deleting user $old_username..."
-        userdel -r "$old_username"
-        echo "User $old_username has been deleted."
+        echo "Deleting user $username..."
+        userdel -r "$username"
+        echo "User $username has been deleted."
     else
-        echo "User $old_username does not exist."
+        echo "User $username does not exist."
     fi
 }
 
@@ -71,7 +61,7 @@ copy_public_key() {
 
     # Gather Keys from /root/.ssh/authorized_keys
     echo "Available public keys in /root/.ssh/authorized_keys:"
-    awk '/^ssh-(rsa|dss|ecdsa|ed25519)/ {print NR " ) " substr($0, length($0)-24, 25) }' "$root_ssh_file"
+    awk '/^ssh-(rsa|dss|ecdsa|ed25519)/ {print NR " ) " substr($0, length($0)-24, 25)}' "$root_ssh_file"
     read -p "Enter the number of the public key to copy: " key_choice
 
     # If no key selected, skip
@@ -89,42 +79,6 @@ copy_public_key() {
     # Remove the key from root authorized_keys
     sed -i "${key_choice}d" "$root_ssh_file"
     echo "Selected public key has been copied to $user_ssh_file and removed from $root_ssh_file."
-}
-
-#########################################################
-# Function to move individual users' SSH keys from root #
-#########################################################
-move_root_ssh_keys() {
-    local root_ssh_file="/root/.ssh/authorized_keys"
-    
-    if [[ ! -f "$root_ssh_file" ]]; then
-        echo "No SSH keys found in /root/.ssh/authorized_keys."
-        return
-    fi
-
-    echo "Identifying SSH keys belonging to individual users..."
-    
-    while read -r line; do
-        key_user=$(echo "$line" | awk '{print $3}')
-        
-        if id "$key_user" &>/dev/null; then
-            user_ssh_dir="/home/$key_user/.ssh"
-            user_ssh_file="$user_ssh_dir/authorized_keys"
-
-            mkdir -p "$user_ssh_dir"
-            touch "$user_ssh_file"
-            chmod 700 "$user_ssh_dir"
-            chmod 600 "$user_ssh_file"
-            chown "$key_user:sudo" "$user_ssh_dir" "$user_ssh_file"
-
-            echo "$line" >> "$user_ssh_file"
-            echo "SSH key for $key_user moved to $user_ssh_file."
-        fi
-    done < "$root_ssh_file"
-
-    # Optional: Clear root authorized_keys if all keys were moved
-    > "$root_ssh_file"
-    echo "Root's authorized_keys file has been cleared."
 }
 
 #################################################
@@ -166,6 +120,11 @@ cleanup_passwd_entry() {
         echo "Invalid selection. No changes made to $passwd_file."
     fi
 }
+
+#copy_public_key "$new_name"
+#echo "Public key has been moved for "$new_username""
+#cleanup_password_entry
+
 
 ############################
 # Prevent locking user out #
@@ -233,6 +192,7 @@ for user in $all_users; do
             echo "SSH configuration for $new_name has been created."
 
             copy_public_key "$new_name"
+
             #Append SSH configuration for the users
 		    bash -c "cat >> /etc/ssh/sshd_config <<EOF
 		
@@ -246,11 +206,8 @@ EOF"
         fi
     fi
 
-    # Call functions after handling the user
+    # Call cleanup_passwd_entry after handling the user
     cleanup_passwd_entry
-    handle_uid_0_users
-    process_sudo_users
-    move_root_ssh_keys
 
     # Confirmation before moving to the next user
     read -p "Press enter to proceed to the next user, or ctrl+c to stop: " proceed
