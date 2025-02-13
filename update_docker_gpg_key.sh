@@ -17,10 +17,24 @@ chmod 0755 /usr/share/keyrings
 mv /etc/apt/trusted.gpg.d/docker.gpg /usr/share/keyrings/docker-archive-keyring.gpg
 chmod 0644 /usr/share/keyrings/docker-archive-keyring.gpg
 
+# Find the correct Docker repository file
+DOCKER_LIST="/etc/apt/sources.list.d/docker.list"
+ARCHIVE_LIST=$(ls /etc/apt/sources.list.d/ | grep -E 'archive_uri-https_download_docker_com_linux_debian-bookworm.list' | head -n 1)
+
 # Update Docker repository file
-sed -i 's|deb \[arch=amd64\] |deb [arch=amd64 signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] |' /etc/apt/sources.list.d/docker.list
+if [ -n "$DOCKER_LIST" ]; then
+    sed -i 's|deb \[arch=amd64\] |deb [arch=amd64 signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] |' "$DOCKER_LIST"
+    echo "Docker repository updated in $DOCKER_LIST."
+fi 
+
+# Update Archive repository file
+if [ -n "$ARCHIVE_LIST" ]; then
+    sed -i 's|deb \[arch=amd64\] |deb [arch=amd64 signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] |' "/etc/apt/sources.list.d/$ARCHIVE_LIST"
+    echo "Updated Docker repository in /etc/apt/sources.list.d/$ARCHIVE_LIST" 
+fi
 
 # Remove the old GPG key file
 rm -f /etc/apt/trusted.gpg
 
 apt update
+
