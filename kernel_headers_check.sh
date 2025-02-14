@@ -28,13 +28,43 @@ else
 fi
 
 # Check if the kernel headers are installed
-if ! dpkg-query -W -f='${Status}' "$PACKAGE" 2>/dev/null | grep -q "installed"; then
+if [[ -f /etc/debian_version ]]; then 
+    if ! dpkg-query -W -f='${Status}' "$PACKAGE" 2>/dev/null | grep -q "installed"; then
 
-    echo "Intalling missing headers for $KERNEL_VERSION"
+        echo "Intalling missing headers for $KERNEL_VERSION"
 
-    apt update && apt install -y "$PACKAGE"
+        apt update && apt install -y "$PACKAGE"
 
-    echo "Headers for $KERNEL_VERSION installed successfully"
+        echo "Headers for $KERNEL_VERSION installed successfully"
+    else
+        echo "Headers for $KERNEL_VERSION are already installed"
+    fi
+
+elif [[ -f /etc/redhat-release ]]; then
+    if ! rpm -q "$PACKAGE" &>/dev/null; then
+
+        echo "Intalling missing headers for $KERNEL_VERSION"
+
+        yum install -y "$PACKAGE" || dnf install -y "$PACKAGE"
+
+        echo "Headers for $KERNEL_VERSION installed successfully"
+    else
+        echo "Headers for $KERNEL_VERSION are already installed"
+    fi
+
+elif [[ -f /etc/os-release ]] && grep -qi "opensuse" /etc/os-release; then
+    if ! rpm -q "$PACKAGE" &>/dev/null; then
+
+        echo "Intalling missing headers for $KERNEL_VERSION"
+
+        zypper install -y "$PACKAGE"
+
+        echo "Headers for $KERNEL_VERSION installed successfully"
+    else
+        echo "Headers for $KERNEL_VERSION are already installed"
+    fi
 else
-    echo "Headers for $KERNEL_VERSION are already installed"
+    echo "Distro not supported."
+    exit 1
 fi
+
