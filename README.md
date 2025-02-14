@@ -35,6 +35,9 @@ This script deletes the username folder and /etc/group and /etc/passwd info.
 ### Docker Service
 This script configures Docker files for the CheckMK Agent Service.
 
+### Kernel headers check
+This script install the missing kernel headers
+
 ### Mount Crypt
 This script encrypt LVM and mount Docker.
 
