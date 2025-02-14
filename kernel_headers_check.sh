@@ -3,16 +3,29 @@
 # ============================================================================
 # Script Name:    kernel_headers_check.sh
 # Author:         Mauro García
-# Version:        1.0
+# Version:        2.0
 # Description:    This script install the missing kernel headers
 # Repository:     https://gitlab.mid.de/magarpol/scripts.git
 # Last Updated:   2025-01-30
 # ============================================================================
 
-
 # Get the running kernel version
 KERNEL_VERSION=$(uname -r)
-PACKAGE="linux-headers-${KERNEL_VERSION}"
+
+# Determine the package name for kernel headers
+if [[ -f /etc/debian_version ]]; then
+    PACKAGE="linux-headers-${KERNEL_VERSION}"
+elif [[ -f /etc/redhat-release ]]; then
+    PACKAGE="kernel-devel-${KERNEL_VERSION}"
+elif [[ -f /etc/os-release ]] && grep -qi "opensuse" /etc/os-release; then
+    PACKAGE="kernel-devel-${KERNEL_VERSION}"
+    if ! zypper search --match-exact "$PACKAGE" &>/dev/null; then
+        PACKAGE="kernel-default-devel"
+    fi 
+else
+    echo "Unsupported distribution."
+    exit 1
+fi
 
 # Check if the kernel headers are installed
 if ! dpkg-query -W -f='${Status}' "$PACKAGE" 2>/dev/null | grep -q "installed"; then
