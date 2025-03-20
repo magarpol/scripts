@@ -68,6 +68,10 @@ This script creates users, stores the Public Key in the right location and chang
 ### Users and SSH email
 This script creates users and Public Keys, configures the	sshd configuration and send an email to users with OTP password
 
+### Welcome Script
+This script configures a welcome message with Server info.
+This is a list of steps to implement the configuration
+
 ### Users and SSH RHEL
 This script creates users, stores the Public Key in the right location and changes sudoers and sshd configuration in RHEL Servers.
 
