@@ -20,6 +20,9 @@ This script configures APT updates service in CheckMK
 ### Check Login
 This script check logins on a number of websites.
 
+### Check Wildcard Certificates
+This script looks for expiration date on wildcard certificates and creates a service in CheckMK to monitor them.
+
 ### Check xz utils version
 This script check if xz-utils is installed, if it´s vulnerable and if an update is available.
 
