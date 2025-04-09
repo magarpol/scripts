@@ -1,0 +1,42 @@
+#cloud-config
+
+# ============================================================================
+# Script Name:    ansible_cloud_config.sh
+# Author:         Mauro García
+# Version:        1.0
+# Description:    This script creates ansible user in IONOX DCD and configures
+#                 the network
+# Repository:     https://gitlab.mid.de/magarpol/scripts.git
+# Last Updated:   2025-04-09
+# ============================================================================
+
+
+users:
+  - name: ansible
+    ssh-authorized-keys:
+      - ${ssh_key}
+    groups: sudo
+    shell: /bin/bash
+
+write_files:
+  - path: /etc/netplan/50-cloud-init.yaml
+    content: |
+      network:
+        version: 2
+        ethernets:
+          ens6:
+            addresses:
+              - ${ip_address}/23
+            gateway4: ${gateway}
+            nameservers:
+              addresses:
+                - ${dns1}
+                - ${dns2}
+
+runcmd:
+  - echo "sudo    ALL=(ALL:ALL) ALL" >> /etc/sudoers
+  - echo "ansible ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
+  - sed -i '/^#*PubkeyAuthentication/s/^#*//;s/no/yes/' /etc/ssh/sshd_config
+  - hostnamectl set-hostname ${hostname}
+  - systemctl restart ssh
+  - netplan apply
