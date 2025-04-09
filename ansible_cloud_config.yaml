@@ -38,5 +38,6 @@ runcmd:
   - echo "ansible ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
   - sed -i '/^#*PubkeyAuthentication/s/^#*//;s/no/yes/' /etc/ssh/sshd_config
   - hostnamectl set-hostname ${hostname}
+  - timedatectl set-timezone Europe/Berlin
   - systemctl restart ssh
   - netplan apply
