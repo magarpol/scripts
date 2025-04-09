@@ -14,6 +14,9 @@ This script takes info from a .cv file and updates AD.
 ### Add NIS account
 This script add a NIS account.
 
+### Ansible user Cloud config
+This script creates ansible user in IONOX DCD and configures the network.
+
 ### APT Updates
 This script configures APT updates service in CheckMK
 
