@@ -12,7 +12,7 @@
 echo "<<<local>>>"
 
 CERT_PATH="<path_to_cert>"
-NAME="ftp.mid.de"
+NAME="<hostname>"
 
 check_cert() {
     if [[ ! -f "$CERT_PATH" ]]; then
