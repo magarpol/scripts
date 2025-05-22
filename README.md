@@ -20,6 +20,9 @@ This script creates ansible user in IONOX DCD and configures the network.
 ### APT Updates
 This script configures APT updates service in CheckMK
 
+### Check FTP certificates
+This script checks out the ftp certificates for CheckMK
+
 ### Check Login
 This script check logins on a number of websites.
 
