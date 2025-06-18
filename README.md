@@ -41,6 +41,9 @@ This script deletes a NIS account.
 ### Delete username folder
 This script deletes the username folder and /etc/group and /etc/passwd info.
 
+### Distro upgrade
+This script adds service in CheckMK to monitor if a distribution upgrade is available.
+
 ### Docker Service
 This script configures Docker files for the CheckMK Agent Service.
 
