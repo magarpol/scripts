@@ -56,6 +56,12 @@ This script encrypt LVM and mount Docker.
 ### NFS Shares
 This script mounts NFS shares after asking prompt on where to mount them.
 
+### Post reboot check
+This script does a post reboot check on system state after reboot and compares it with pre_reboot_check.sh
+
+### Pre reboot check
+This script does a pre reboot check on system state.
+
 ### Reboot
 This script configures the Reboot service in CheckMK.
 
