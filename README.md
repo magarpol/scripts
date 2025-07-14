@@ -48,10 +48,13 @@ This script adds service in CheckMK to monitor if a distribution upgrade is avai
 This script configures Docker files for the CheckMK Agent Service.
 
 ### Kernel headers check
-This script install the missing kernel headers
+This script install the missing kernel headers.
+
+### Login check
+This script creates a login check service in CheckMK.
 
 ### Monitor nodes, podes and namespaces
-This script creates services from every namespace, pod and node on a k8s cluster
+This script creates services from every namespace, pod and node on a k8s cluster.
 
 ### Mount Crypt
 This script encrypt LVM and mount Docker.
