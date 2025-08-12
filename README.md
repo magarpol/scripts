@@ -71,6 +71,9 @@ This script does a pre reboot check on system state.
 ### Reboot
 This script configures the Reboot service in CheckMK.
 
+### Renovate certificates (Unifi)
+This script creates a .p12 file from .pem LetsEncrypt certificates and imports the file to the keystore
+
 ### Self Signed Certificates
 This script generates self signed certificates.
 
