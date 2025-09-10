@@ -26,6 +26,12 @@ This script checks out the ftp certificates for CheckMK
 ### Check Login
 This script check logins on a number of websites.
 
+### Check MongoDB Service
+This local script for checkmk checks the mongodb process in Unifi.
+
+### Check Unifi Service
+This local script for checkmk checks Unifi service.
+
 ### Check Wildcard Certificates
 This script looks for expiration date on wildcard certificates and creates a service in CheckMK to monitor them.
 
