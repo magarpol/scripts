@@ -77,6 +77,9 @@ This script does a pre reboot check on system state.
 ### Reboot
 This script configures the Reboot service in CheckMK.
 
+### Renew UniFi Certificates
+This script creates a PKCS12 file from LetsEncrypt Certs, imports it into Java keystore and restarts the unifi service
+
 ### Renovate certificates (Unifi)
 This script creates a .p12 file from .pem LetsEncrypt certificates and imports the file to the keystore
 
