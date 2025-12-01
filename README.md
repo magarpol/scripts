@@ -32,6 +32,9 @@ This local script for checkmk checks the mongodb process in Unifi.
 ### Check Unifi Service
 This local script for checkmk checks Unifi service.
 
+### Check Unifi Update
+This script creates a local service in CheckMK that monitors if unifi needs an update
+
 ### Check Wildcard Certificates
 This script looks for expiration date on wildcard certificates and creates a service in CheckMK to monitor them.
 
