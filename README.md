@@ -14,6 +14,9 @@ This script takes info from a .cv file and updates AD.
 ### Add NIS account
 This script add a NIS account.
 
+### Adoptium Repo
+This script creates an Adoptium Repo Update Service in CheckMK.
+
 ### Ansible user Cloud config
 This script creates ansible user in IONOX DCD and configures the network.
 
