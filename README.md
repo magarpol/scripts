@@ -59,6 +59,9 @@ This script adds service in CheckMK to monitor if a distribution upgrade is avai
 ### Docker Service
 This script configures Docker files for the CheckMK Agent Service.
 
+### Docker Snapshots cleaning
+This script cleans docker snapshots daily
+
 ### Kernel headers check
 This script install the missing kernel headers.
 
