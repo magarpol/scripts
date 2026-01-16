@@ -1,5 +1,5 @@
 # ============================================================================
-# Script Name:    dockers_snapshots_cleaning.sh.sh
+# Script Name:    docker_snapshots_cleaning.sh.sh
 # Author:         Mauro García
 # Version:        1.0
 # Description:    This script cleans docker snapshots daily
