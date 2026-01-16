@@ -1,3 +1,12 @@
+# ============================================================================
+# Script Name:    dockers_snapshots_cleaning.sh.sh
+# Author:         Mauro García
+# Version:        1.0
+# Description:    This script cleans docker snapshots daily
+# Repository:     https://github.com/magarpol/scripts
+# Last Updated:   2025-01-16
+# ============================================================================
+
 # cronjob
 # 0 5 * * * /root/cleanup_docker.sh 2&> /dev/null
  
